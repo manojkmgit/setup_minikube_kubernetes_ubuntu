@@ -5,7 +5,7 @@ https://docs.docker.com/engine/install/ubuntu/
 
 ssh to the machine which will be set up as master node.
 
-```shell
+```bash
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
