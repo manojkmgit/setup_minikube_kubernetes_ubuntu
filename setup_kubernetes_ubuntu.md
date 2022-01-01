@@ -7,12 +7,12 @@ https://docs.docker.com/engine/install/ubuntu/
 
 Do ssh to the machine.
 
-```bash
+```console
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
 Install docker
-```bash
+```console
 sudo apt-get update
 sudo apt-get install \
     ca-certificates \
@@ -29,7 +29,7 @@ sudo usermod -aG docker $USER
 ```
 
 Exit from the machine.
-```bash
+```console
 exit
 ```
 
@@ -37,18 +37,18 @@ Do ssh again to the machine.
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 
 Verify docker status
-```bash
+```console
 docker info
 ```
 
 ## Task 02 - Install Kubernetes (master as well as worker node)
 Do ssh to the machine.
 
-```bash
+```console
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
-```bash
+```console
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 sudo apt-get install kubeadm kubelet kubectl -y
@@ -59,20 +59,20 @@ sudo hostnamectl set-hostname k8s-master-01/k8s-node-01/k8s-node-02
 ```
 
 Reboot the machine.
-```bash
+```console
 sudo reboot
 ```
 ## Task 03 - Change container runtime cgroup drive to systemd (master as well as worker node)
 Do ssh to the machine.
 
-```bash
+```console
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
 https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
 Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
 Kubernetes recommends systemd.
-```bash
+```console
 sudo cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf | grep systemd
 ```
 
@@ -80,12 +80,12 @@ Output might be like this:
 Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/ kubelet.conf --cgroup-driver=systemd"
 
 Check docker driver
-```bash
+```console
 docker info | grep 'group Driver'
 ```
 
 ### Change docker to use systemd, if needed
-```bash
+```console
 sudo mkdir /etc/docker
 #Add below lines to /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -102,7 +102,7 @@ EOF
 
 Restart docker to effect the driver change.
 
-```bash
+```console
 sudo systemctl enable docker
 sudo systemctl daemon-reload
 sudo systemctl restart docker
@@ -114,16 +114,16 @@ Kubenetes cluster is initialized using kubeadm binary.
 
 Do ssh to the machine.
 
-```bash
+```console
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
 Install net-tools to get ifconfig binary.
-```bash
+```console
 sudo apt install net-tools
 ```
 Clean up any old Kubernetes installation. Be careful and sure.
-```bash
+```console
 sudo kubeadm reset -f
 ```
 
@@ -143,15 +143,16 @@ What is POD network CIDR in Kubernetes?
 --service-cidr -> choose a CIDR which is not in use or doesn't exist yet
 
 Example commands:
-```console
+```bash
 sudo kubeadm init
 sudo kubeadm init --service-cidr 10.96.0.0/12
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU --v=9
 sudo kubeadm init --apiserver-advertise-address=192.168.0.111 --pod-network-cidr=10.244.0.0/16 --service-cidr 10.240.0.0/12 --kubernetes-version v1.22.2 --ignore-preflight-errors=NumCPU --v=5
 ```
 Here, we are using below one. Replace apiserver with private ip of the master server.
+
 Run below command:
-```bash
+```console
 sudo kubeadm init --apiserver-advertise-address=172.31.45.213 --pod-network-cidr=10.244.0.0/16 --service-cidr 10.96.0.0/12 --ignore-preflight-errors=NumCPU,Mem --v=5
 ```
 
