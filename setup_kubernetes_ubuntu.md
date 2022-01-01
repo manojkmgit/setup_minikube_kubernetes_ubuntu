@@ -143,7 +143,7 @@ What is POD network CIDR in Kubernetes?
 --service-cidr -> choose a CIDR which is not in use or doesn't exist yet
 
 Example commands:
-```bash
+```
 sudo kubeadm init
 sudo kubeadm init --service-cidr 10.96.0.0/12
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU --v=9
