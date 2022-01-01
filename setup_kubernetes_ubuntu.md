@@ -1,14 +1,18 @@
 
-# All steps to set up Kubernetes cluster with one master and one worker nodes.
-# Task 01 - Install docker
+# All steps to set up Kubernetes cluster with one master and one worker node.
+
+# Run tasks 01, 02, 03 on master as well as worker node.
+## Task 01 - Install docker
 https://docs.docker.com/engine/install/ubuntu/
 
-ssh to the machine which will be set up as master node.
+Do ssh to the machine which will be set up as master node.
 
 ```bash
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
+-- Install docker
+```bash
 sudo apt-get update
 sudo apt-get install \
     ca-certificates \
