@@ -5,7 +5,7 @@
 ## Task 01 - Install docker (master as well as worker node)
 https://docs.docker.com/engine/install/ubuntu/
 
-Do ssh to the master/worker machine.
+Do ssh to the machine.
 
 ```bash
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
@@ -45,6 +45,10 @@ docker info
 Do ssh to the machine.
 
 ```bash
+ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
+```
+
+```bash
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 sudo apt-get install kubeadm kubelet kubectl -y
@@ -59,6 +63,12 @@ Reboot the machine.
 sudo reboot
 ```
 ## Task 03 - Change container runtime cgroup drive to systemd (master as well as worker node)
+Do ssh to the machine.
+
+```bash
+ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
+```
+
 https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
 Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
 Kubernetes recommends systemd.
@@ -100,21 +110,39 @@ sudo systemctl restart docker
 
 ## Task 04 - Init Kubernetes (only to be run on master)
 
+Do ssh to the machine.
+
+```bash
+ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
+```
+
+Install net-tools to get ifconfig binary.
+```bash
 sudo apt install net-tools
-
+```
+Clean up any old Kubernetes installation. Be careful and sure.
+```bash
 sudo kubeadm reset -f
-#What is POD network Cidr in Kubernetes?
-#Kubernetes assigns each node a range of IP addresses, a CIDR block, so that each Pod can have a unique IP address. The size of the CIDR block corresponds to the maximum number of Pods per node.
+```
 
-# Get private ip from master node
+All EC2 Instances get IP from the host CIDR.\
+All Pods in Kubernetes will get IP from the Pod CIDR.\
+All Kubernetes Services get clusterIPs from Service CIDR.\
+
+What is POD network CIDR in Kubernetes?
+Kubernetes assigns each node a range of IP addresses, a CIDR block, so that each Pod can have a unique IP address. The size of the CIDR block corresponds to the maximum number of Pods per node.
+
+Get private ip
+
+```bash
 ifconfig eth0
+#or
 curl http://169.254.169.254/latest/meta-data/local-ipv4
+```
 
-#All EC2 Instances get IP from the host CIDR.
-#All Pods in Kubernetes will get IP from the Pod CIDR.
-#All Kubernetes Services get clusterIPs from Service CIDR.
-
-Init can be done with various options
+Init can be done in many ways. All or few or none of the options can be given. If none of the CIDR parameters given, then kubernetes takes default ones which can work in many cases but it is also good to give custom values to have full control of the configuration.\
+Parameter --ignore-preflight-errors can be given to suppress capacity related or other errors, if needed.\
+Parameter --v controls the verbosity level of the output.\
 
 #sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU --v=9
 
