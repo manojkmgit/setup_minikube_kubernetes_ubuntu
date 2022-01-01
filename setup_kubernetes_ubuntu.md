@@ -2,7 +2,7 @@
 # All steps to set up Kubernetes cluster with one master and one worker node.
 
 # Run tasks 01, 02, 03 on master as well as worker node.
-## Task 01 - Install docker
+## Task 01 - Install docker (master as well as worker node)
 https://docs.docker.com/engine/install/ubuntu/
 
 Do ssh to the master/worker machine.
@@ -41,7 +41,7 @@ Verify docker status
 docker info
 ```
 
-## Task 02 - Install Kubernetes
+## Task 02 - Install Kubernetes (master as well as worker node)
 Do ssh to the machine.
 
 ```bash
@@ -58,7 +58,7 @@ Reboot the machine.
 ```bash
 sudo reboot
 ```
-## Task 03 - Change container runtime cgroup drive to systemd
+## Task 03 - Change container runtime cgroup drive to systemd (master as well as worker node)
 https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
 Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
 Kubernetes recommends systemd.
