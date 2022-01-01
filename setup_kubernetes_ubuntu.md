@@ -108,7 +108,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-## Task 04 - Init Kubernetes (only to be run on master)
+## Task 04 - Init Kubernetes (run on master only)
 
 Kubenetes cluster is initialized using kubeadm binary.
 
@@ -139,7 +139,7 @@ What is POD network CIDR in Kubernetes?
 * Parameter --v controls the verbosity level of the output.\
 
 --apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet)
---pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the POD networking addon.
+--pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the Kubernetes networking model.
 --service-cidr -> choose a CIDR which is not in use or doesn't exist yet
 
 Example commands:
@@ -189,23 +189,35 @@ In case, above set up has failed and you want to redo, you can clean up the setu
 sudo kubeadm reset -f
 
 
-Run the below commands shown in above output.
+As mentioned in the above output, now run the below commands.
+```console
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
 
 View the cluster config
+```console
 kubectl get cm kubeadm-config -n kube-system -o yaml
+```
 
-View the current status of pods
+View the current status of resources
+
+```console
 kubectl get svc -o wide -A
 kubectl get deploy -o wide -A
 kubectl get pods -A
 kubectl get pods -o wide --all-namespaces
 kubectl get daemonset -o wide -A
+```
 
-Full list -> kubectl api-resources
+You can use short-cuts for many of the resource types. To get full list of possible resources and their short-cuts, run below:
+```console
+kubectl api-resources
+```
 
+Few examples are:
+```
 pod (po)
 replicationcontroller (rc)
 deployment (deploy)
@@ -220,22 +232,30 @@ node (no)
 secret
 events (ev)
 statefulset (sts)
-
+```
 
 View network plugin and pof infra container image
+```console
 sudo cat /var/lib/kubelet/kubeadm-flags.env
+```
 
-# Task 05 - Apply pod network
+# Task 05 - Apply Kubernetes networking model (run on master only)
 
+Kubernetes doesn't implement any default networking model. Rather, we need to implement one as addon.
 
-Apply your Pod networking (Weave net)
+https://kubernetes.io/docs/concepts/cluster-administration/networking/
+
+For our case, we will implement cluster networking using Weave net (https://www.weave.works/oss/net/)
+
+```console
 sudo mkdir -p /var/lib/weave
 head -c 16 /dev/urandom | base64 | sudo tee /var/lib/weave/weave-passwd
 kubectl create secret -n kube-system generic weave-passwd --from-file=/var/lib/weave/weave-passwd
 kubectl get secret -n kube-system
-
-Apply your Pod networking
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&password-secret=weave-passwd&env.IPALLOC_RANGE=10.244.0.0/16"
+```
+
+You can implement the same without parameter env.IPALLOC_RANGE too but in that case, Weave Net will not use --pod-network-cidr used during Kubernetes init.
 
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&password-secret=weave-passwd"
 
