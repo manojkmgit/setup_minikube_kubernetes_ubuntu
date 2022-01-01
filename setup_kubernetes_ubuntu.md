@@ -110,6 +110,8 @@ sudo systemctl restart docker
 
 ## Task 04 - Init Kubernetes (only to be run on master)
 
+Kubenetes cluster is initialized using kubeadm binary.
+
 Do ssh to the machine.
 
 ```bash
@@ -125,32 +127,33 @@ Clean up any old Kubernetes installation. Be careful and sure.
 sudo kubeadm reset -f
 ```
 
-All EC2 Instances get IP from the host CIDR.\
-All Pods in Kubernetes will get IP from the Pod CIDR.\
-All Kubernetes Services get clusterIPs from Service CIDR.\
+All EC2 Instances get IP from the host CIDR. (--apiserver-advertise-address)\
+All Pods in Kubernetes will get IP from the Pod CIDR. (--pod-network-cidr)\
+All Kubernetes Services get clusterIPs from Service CIDR. (--service-cidr)
 
 What is POD network CIDR in Kubernetes?
 * Kubernetes assigns each node a range of IP addresses, a CIDR block, so that each Pod can have a unique IP address. The size of the CIDR block corresponds to the maximum number of Pods per node.
-
-Get private ip
-
-```bash
-ifconfig eth0
-#or
-curl http://169.254.169.254/latest/meta-data/local-ipv4
-```
 
 * Init can be done in many ways. All or few or none of the options can be given. If none of the CIDR parameters given, then kubernetes takes default ones which can work in many cases but it is also good to give custom values to have full control of the configuration.\
 * Parameter --ignore-preflight-errors can be given to suppress capacity related or other errors, if needed.\
 * Parameter --v controls the verbosity level of the output.\
 
-#sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU --v=9
+--apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet)
+--pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the POD networking addon.
+--service-cidr -> choose a CIDR which is not in use or doesn't exist yet
 
-#sudo kubeadm init --service-cidr 10.96.0.0/12
-#sudo kubeadm init --apiserver-advertise-address=192.168.0.111 --pod-network-cidr=10.244.0.0/16 --service-cidr 10.240.0.0/12 --kubernetes-version v1.22.2 --ignore-preflight-errors=NumCPU --v=5
-
-Here, we are using this one. Replace apiserver with private ip of the master server
+Example commands:
+```console
+sudo kubeadm init
+sudo kubeadm init --service-cidr 10.96.0.0/12
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU --v=9
+sudo kubeadm init --apiserver-advertise-address=192.168.0.111 --pod-network-cidr=10.244.0.0/16 --service-cidr 10.240.0.0/12 --kubernetes-version v1.22.2 --ignore-preflight-errors=NumCPU --v=5
+```
+Here, we are using below one. Replace apiserver with private ip of the master server.
+Run below command:
+```bash
 sudo kubeadm init --apiserver-advertise-address=172.31.45.213 --pod-network-cidr=10.244.0.0/16 --service-cidr 10.96.0.0/12 --ignore-preflight-errors=NumCPU,Mem --v=5
+```
 
 You will see output like below:
 
