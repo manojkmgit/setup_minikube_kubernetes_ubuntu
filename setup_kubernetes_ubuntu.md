@@ -1,4 +1,5 @@
 
+# All steps to set up Kubernetes cluster with one master and one worker nodes.
 # Task 01 - Install docker
 ### https://docs.docker.com/engine/install/ubuntu/
 
