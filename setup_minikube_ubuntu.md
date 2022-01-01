@@ -20,7 +20,7 @@ alias mk="minikube"
 alias kb="kubectl"
 
 minikube start --driver=docker
-#minkube delete
+#minikube delete
 
 minikube status
 kubectl cluster-info
