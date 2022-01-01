@@ -157,8 +157,9 @@ sudo kubeadm init --apiserver-advertise-address=172.31.45.213 --pod-network-cidr
 ```
 
 You will see output like below:
-
-##########################################
+```
+....
+....
 [addons] Applied essential addon: CoreDNS
 [addons] Applied essential addon: kube-proxy
 
@@ -182,10 +183,10 @@ Then you can join any number of worker nodes by running the following on each as
 
 kubeadm join 172.31.45.213:6443 --token en5mr7.33h89rt55lrwrsik \
         --discovery-token-ca-cert-hash sha256:872b7fe83a97de024031ffdb4a0ca0e0174f4c68470d17f57806cea019c15030
-##########################################
+```
 
-In case, you need to clean up the cluster setup:
-#sudo kubeadm reset -f
+In case, above set up has failed and you want to redo, you can clean up the setup using below command:\
+sudo kubeadm reset -f
 
 
 Run the below commands shown in above output.
