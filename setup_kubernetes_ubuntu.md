@@ -5,13 +5,13 @@
 ## Task 01 - Install docker
 https://docs.docker.com/engine/install/ubuntu/
 
-Do ssh to the machine which will be set up as master node.
+Do ssh to the master/worker machine.
 
 ```bash
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
--- Install docker
+Install docker
 ```bash
 sudo apt-get update
 sudo apt-get install \
@@ -26,17 +26,25 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 sudo usermod -aG docker $USER
+```
 
-# log out
+Exit from the machine.
+```bash
 exit
+```
 
-# log in
+Do ssh again to the machine.
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 
+Verify docker status
+```bash
 docker info
+```
 
+## Task 02 - Install Kubernetes
+Do ssh to the machine.
 
-# Task 02 - Install Kubernetes
+```bash
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 sudo apt-get install kubeadm kubelet kubectl -y
@@ -44,26 +52,30 @@ sudo apt-mark hold kubeadm kubelet kubectl
 sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
 sudo hostnamectl set-hostname k8s-master-01/k8s-node-01/k8s-node-02
+```
 
+Reboot the machine.
+```bash
 sudo reboot
-
-# https://kubernetes.io/docs/reference/ports-and-protocols/
-
-
-# Task 03 - Change container runtime cgroup drive to systemd
-
-# Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
-# Kubernetes recommends systemd
+```
+## Task 03 - Change container runtime cgroup drive to systemd
+https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
+Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
+Kubernetes recommends systemd.
+```bash
 sudo cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf | grep systemd
+```
 
-# Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/ kubelet.conf --cgroup-driver=systemd"
+Output might be like this:
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/ kubelet.conf --cgroup-driver=systemd"
 
-# https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
-
-### Change docker to use systemd
+Check docker driver
+```bash
 docker info | grep 'group Driver'
+```
 
-#If group is not systemd, change it to systemd
+### Change docker to use systemd, if needed
+```bash
 sudo mkdir /etc/docker
 #Add below lines to /etc/docker/daemon.json
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -76,12 +88,17 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
   "storage-driver": "overlay2"
 }
 EOF
+```
 
+Restart docker to effect the driver change.
+
+```bash
 sudo systemctl enable docker
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+```
 
-# Task 04 - Init Kubernetes - only to be run on master
+## Task 04 - Init Kubernetes (only to be run on master)
 
 sudo apt install net-tools
 
