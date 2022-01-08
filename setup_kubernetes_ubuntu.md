@@ -137,9 +137,9 @@ All Kubernetes Services get clusterIPs from Service CIDR. (--service-cidr)
 What is POD network CIDR in Kubernetes?
 * Kubernetes assigns each node a range of IP addresses, a CIDR block, so that each Pod can have a unique IP address. The size of the CIDR block corresponds to the maximum number of Pods per node.
 
-* Init can be done in many ways. All or few or none of the options can be given. If none of the CIDR parameters given, then kubernetes takes default ones which can work in many cases but it is also good to give custom values to have full control of the configuration.\
-* Parameter --ignore-preflight-errors can be given to suppress capacity related or other errors, if needed.\
-* Parameter --v controls the verbosity level of the output.\
+* Init can be done in many ways. All or few or none of the options can be given. If none of the CIDR parameters given, then kubernetes takes default ones which can work in many cases but it is also good to give custom values to have full control of the configuration.
+* Parameter --ignore-preflight-errors can be given to suppress capacity related or other errors, if needed.
+* Parameter --v controls the verbosity level of the output.
 
 --apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet)
 --pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the Kubernetes networking model.
