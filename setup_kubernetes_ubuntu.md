@@ -275,8 +275,9 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versio
 
 You can implement the same without parameter env.IPALLOC_RANGE too but in that case, Weave Net will not use --pod-network-cidr used during Kubernetes init.
 
+```
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&password-secret=weave-passwd"
-
+```
 
 # verify the value of --pod-network-cidr
 kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}'
