@@ -257,7 +257,7 @@ statefulset (sts)
 sudo cat /var/lib/kubelet/kubeadm-flags.env
 ```
 
-# Task 05 - Apply Kubernetes networking model (run on master only)
+# Task 05 - Apply Kubernetes Pod networking model (run on master node only)
 
 Kubernetes doesn't implement any default networking model. Rather, we need to implement one as addon.
 
@@ -315,6 +315,7 @@ kubectl delete -n kube-system role weave-net
 kubectl delete -n kube-system clusterrolebinding weave-net
 kubectl delete -n kube-system clusterrole weave-net
 kubectl delete -n kube-system serviceaccount weave-net
+```
 
 ### restart coredns, if needed
 ```
@@ -344,7 +345,7 @@ kubectl get pods --all-namespaces -o custom-columns=:metadata.namespace --field-
 kubectl describe node k8s-master-01 | grep -i taint
 ```
 
-# If you have deleted deploy coredns by mistake, then do this to recover:
+### If you have deleted deploy coredns by mistake, then do this to recover:
 ```console
 cd ~
 git clone https://github.com/coredns/deployment.git
@@ -362,40 +363,49 @@ You can deploy the Pod Network using flannel too instead of Weave Net. At one ti
 sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 ```
 
-# Task 06 - Add worker nodes to the cluster
+# Task 06 - Add worker nodes to the cluster (run on all worker nodes)
 
-Open ports on master and worker according to below link:
+Open ports on master and worker according to below link:/
 1. https://kubernetes.io/docs/reference/ports-and-protocols/
 2. Allow the CNI 6783 and 6784 ports in the nodes security group
 
-Control plane
-Protocol	Direction	Port Range	Purpose	Used By
-TCP	Inbound	6443	Kubernetes API server	All
-TCP	Inbound	2379-2380	etcd server client API	kube-apiserver, etcd
-TCP	Inbound	10250	Kubelet API	Self, Control plane
-TCP	Inbound	10259	kube-scheduler	Self
-TCP	Inbound	10257	kube-controller-manager	Self
-Worker node(s)
-Protocol	Direction	Port Range	Purpose	Used By
-TCP	Inbound	10250	Kubelet API	Self, Control plane
-TCP	Inbound	30000-32767	NodePort Services†	All
+**Control plane**/
+Protocol	Direction	Port Range	Purpose	Used By/
+TCP	Inbound	6443	Kubernetes API server	All/
+TCP	Inbound	2379-2380	etcd server client API	kube-apiserver, etcd/
+TCP	Inbound	10250	Kubelet API	Self, Control plane/
+TCP	Inbound	10259	kube-scheduler	Self/
+TCP	Inbound	10257	kube-controller-manager	Self/
 
+**Worker node(s)**/
+Protocol	Direction	Port Range	Purpose	Used By/
+TCP	Inbound	10250	Kubelet API	Self, Control plane/
+TCP	Inbound	30000-32767	NodePort Services†	All/
 
-If needed to get the join token again, run this on control node:
+After ports have been open as needed, it's the time for the nodes to join the Kubernetes cluster.
+
+If you don't have the join token which were give in the output of the kubeadm init command run earlier, then run below on control node to get the same again:
+```console
 kubeadm token list
 kubeadm token create
-If you do not have the value of --discovery-token-ca-cert-hash, you can get it by running the following command chain on the control-plane node:
+```
 
+If you don't have the discovery token (--discovery-token-ca-cert-hash), then run below on control node to get the same again.
+```console
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \
    openssl dgst -sha256 -hex | sed 's/^.* //'
+```
 
-Join Worker Node to Cluster
-# Go to worker node
+### Join Worker Node to Cluster
+Go to worker node and run below.
+
+```console
 sudo kubeadm join 172.31.45.213:6443 --token en5mr7.33h89rt55lrwrsik \
         --discovery-token-ca-cert-hash sha256:872b7fe83a97de024031ffdb4a0ca0e0174f4c68470d17f57806cea019c15030
+```
 
 You will see messages like this:
-##############################
+```
 [kubelet-start] Starting the kubelet
 [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
 
@@ -404,17 +414,22 @@ This node has joined the cluster:
 * The Kubelet was informed of the new secure connection details.
 
 Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
-#############################
+```
 
+Verify the nodes
 kubectl get nodes -A -o wide
 
 Steps to remove nodes, if needed:
-	#Run on master
+#Run on master
+```console
+	
 	kubectl get nodes
 	kubectl drain k8s-node-01
 	kubectl delete node k8s-node-01
-
-	#Run on worker
+```
+#Run on worker
+```console
+	
 	sudo rm /opt/cni/bin/weave-*
 	sudo kubeadm reset -f
 	If you want to download and run it yourself, it is:
@@ -425,21 +440,24 @@ Steps to remove nodes, if needed:
 	$ kubectl apply -f https://git.io/weave-kube-2.8.1 -n kube-system
 	you would remove them using:
 	$ kubectl delete -f https://git.io/weave-kube-1.6 -n kube-system
+```
 
-Location of logs:
-https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/
+### Location of logs and troubleshooting info:
+Ref: https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/
+```console
 kubectl get nodes
 kubectl cluster-info dump
-Master
-/var/log/kube-apiserver.log - API Server, responsible for serving the API
-/var/log/kube-scheduler.log - Scheduler, responsible for making scheduling decisions
-/var/log/kube-controller-manager.log - Controller that manages replication controllers
-Worker Nodes
-/var/log/kubelet.log - Kubelet, responsible for running containers on the node
-/var/log/kube-proxy.log - Kube Proxy, responsible for service load balancing
+kubectl describe po <pod_name>
+```
+**Master Nodes**
+/var/log/kube-apiserver.log - API Server, responsible for serving the API\
+/var/log/kube-scheduler.log - Scheduler, responsible for making scheduling decisions\
+/var/log/kube-controller-manager.log - Controller that manages replication controllers\
+**Worker Nodes**
+/var/log/kubelet.log - Kubelet, responsible for running containers on the node\
+/var/log/kube-proxy.log - Kube Proxy, responsible for service load balancing\
 
 Debugging:
-https://kubernetes.io/docs/tasks/debug-application-cluster/
+Ref: https://kubernetes.io/docs/tasks/debug-application-cluster/
 
-
-############################################
+**End of the document**
