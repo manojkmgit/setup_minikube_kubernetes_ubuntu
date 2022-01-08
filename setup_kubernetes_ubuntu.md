@@ -1,8 +1,8 @@
 
 # All steps to set up Kubernetes cluster with one master and one worker nodes.
 
-# Run tasks 01, 02, 03 on master as well as worker node.
-## Task 01 - Install docker (master as well as worker node)
+# Run tasks 01, 02, 03 on master as well as worker nodes.
+## Task 01 - Install docker (master as well as worker nodes)
 https://docs.docker.com/engine/install/ubuntu/
 
 Do ssh to the machine.
@@ -41,7 +41,7 @@ Verify docker status
 docker info
 ```
 
-## Task 02 - Install Kubernetes (master as well as worker node)
+## Task 02 - Install Kubernetes (master as well as worker nodes)
 Do ssh to the machine.
 
 ```console
@@ -62,7 +62,7 @@ Reboot the machine.
 ```console
 sudo reboot
 ```
-## Task 03 - Change container runtime cgroup drive to systemd (master as well as worker node)
+## Task 03 - Change container runtime cgroup drive to systemd (master as well as worker nodes)
 Do ssh to the machine.
 
 ```console
