@@ -421,14 +421,14 @@ kubectl get nodes -A -o wide
 
 ### Steps to remove nodes, if needed:
 #Run on master
-```console
+```
 	
 	kubectl get nodes
 	kubectl drain k8s-node-01
 	kubectl delete node k8s-node-01
 ```
 #Run on worker
-```console
+```
 	
 	sudo rm /opt/cni/bin/weave-*
 	sudo kubeadm reset -f
@@ -449,11 +449,12 @@ kubectl get nodes
 kubectl cluster-info dump
 kubectl describe po <pod_name>
 ```
-**Master Nodes**
+**Master Nodes**\
 /var/log/kube-apiserver.log - API Server, responsible for serving the API\
 /var/log/kube-scheduler.log - Scheduler, responsible for making scheduling decisions\
 /var/log/kube-controller-manager.log - Controller that manages replication controllers\
-**Worker Nodes**
+
+**Worker Nodes**\
 /var/log/kubelet.log - Kubelet, responsible for running containers on the node\
 /var/log/kube-proxy.log - Kube Proxy, responsible for service load balancing\
 
