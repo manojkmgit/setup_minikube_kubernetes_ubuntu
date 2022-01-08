@@ -71,6 +71,8 @@ ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 
 https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver
 
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+
 Check that below file either has systemd for container runtime cgroup driver, or nothing explicitly mentioned at all.
 Kubernetes recommends systemd.
 ```console
