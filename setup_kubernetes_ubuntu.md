@@ -384,7 +384,7 @@ TCP	Inbound	30000-32767	NodePort Services†	All
 
 After ports have been open as needed, it's the time for the nodes to join the Kubernetes cluster.
 
-If you don't have the join token which were give in the output of the kubeadm init command run earlier, then run below on control node to get the same again:
+If you don't have the join token (--token) which were give in the output of the kubeadm init command run earlier, then run below on control node to get the same again:
 ```console
 kubeadm token list
 kubeadm token create
