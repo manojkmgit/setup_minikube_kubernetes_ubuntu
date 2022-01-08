@@ -4,7 +4,6 @@
 ssh -i C:DMZ1.pem ubuntu@XX.XXX.XXX.XX
 ```
 
-Install docker
 ```console
 sudo apt-get update
 sudo apt-get install \
