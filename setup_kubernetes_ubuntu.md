@@ -300,9 +300,10 @@ echo $SVCRANGE
 
 ### Check value of pod network range
 ```console
+kubectl get ds weave-net --no-headers -n kube-system -o custom-columns=":metadata.name"
 kubectl get pod -n kube-system | grep weave
 kubectl -n kube-system logs weave-net-z4bwr -c weave | grep ipalloc-range
-kubeadm config images list
+kubectl describe po `kubectl get ds weave-net --no-headers -n kube-system -o custom-columns=":metadata.name"` -n kube-system | grep IPALLOC_RANGE
 ```
 
 ### Steps to remove weave-net if needed
