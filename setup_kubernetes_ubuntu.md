@@ -392,7 +392,7 @@ Protocol	Direction	Port Range	Purpose	Used By\
 TCP	Inbound	10250	Kubelet API	Self, Control plane\
 TCP	Inbound	30000-32767	NodePort Services†	All
 
-![plot](./k8s-ports.png)
+![K8S Ports](./k8s-ports.png)
 
 After ports have been open as needed, it's the time for the nodes to join the Kubernetes cluster.
 
@@ -474,5 +474,42 @@ kubectl describe po <pod_name>
 
 Debugging:
 Ref: https://kubernetes.io/docs/tasks/debug-application-cluster/
+
+### Smoke Testing
+Now, we can test the functionality of the cluster.
+
+Below is the meaning of ports inside the file nginx-svc-nodeport.yml:
+
+```bash
+  ports:
+  - name: service-ports
+    protocol: TCP
+    nodePort: 31111 **-> this is service port**
+    port: 8000 **-> this is Pod port**
+    targetPort: 80 **-> this is container port as exposed inside the container image**
+```
+
+Run these commands on master to create a deployment and nodeport service.
+
+```console
+kubectl apply -f nginx-svc-nodeport.yml
+kubectl apply -f nginx-dep.yml
+```
+
+Check the status of deployments, pods, services, endpoints.
+```console
+kubectl get deploy,po,svc,ep -o wide
+```
+
+Now, you should be able to curl the app web page while sitting on **any of the nodes** (master and worker) using below urls.
+
+curl <pod_ip_of_any_pod>:80
+curl <service_ip>:8000
+curl <private_ip_of_any_node>:31111
+
+Also, you should be able to curl the app web page while sitting out of the cluster, after allowing the nodeport inbound rule in the security group in AWS.
+curl <public_ip_of_any_node>:31111
+
+![K8S Ports](./k8s-ips-ports-annotated.png)
 
 **End of the document**
