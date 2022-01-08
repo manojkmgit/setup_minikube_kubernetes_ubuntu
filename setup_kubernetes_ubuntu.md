@@ -419,7 +419,7 @@ Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
 Verify the nodes
 kubectl get nodes -A -o wide
 
-Steps to remove nodes, if needed:
+### Steps to remove nodes, if needed:
 #Run on master
 ```console
 	
