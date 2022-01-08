@@ -382,6 +382,8 @@ Protocol	Direction	Port Range	Purpose	Used By\
 TCP	Inbound	10250	Kubelet API	Self, Control plane\
 TCP	Inbound	30000-32767	NodePort Services†	All
 
+![plot](./k8s-ports.png)
+
 After ports have been open as needed, it's the time for the nodes to join the Kubernetes cluster.
 
 If you don't have the join token (--token) which were give in the output of the kubeadm init command run earlier, then run below on control node to get the same again:
