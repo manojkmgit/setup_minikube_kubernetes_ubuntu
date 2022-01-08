@@ -222,6 +222,7 @@ kubeadm config print init-defaults
 ### View the current status of resources
 
 ```console
+kubectl get componentstatuses
 kubectl get svc -o wide -A
 kubectl get deploy -o wide -A
 kubectl get pods -A
@@ -277,6 +278,15 @@ You can implement the same without parameter env.IPALLOC_RANGE too but in that c
 
 ```
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&password-secret=weave-passwd"
+```
+
+### Verify Weave Net pods and status
+```console
+kubectl get pods -n kube-system -l name=weave-net -o wide
+kubectl exec -n kube-system weave-net-ll6zf -c weave -- /home/weave/weave --local status
+ip route
+ip -4 -o addr
+sudo iptables-save
 ```
 
 ### Verify the value of --pod-network-cidr
@@ -367,7 +377,7 @@ sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Do
 
 Open ports on master and worker according to below link:/
 1. https://kubernetes.io/docs/reference/ports-and-protocols/
-2. Allow the CNI 6783 and 6784 ports in the nodes security group
+2. Weave Net requirements - TCP 6783 and UDP 6783/6784
 
 **Control plane**\
 Protocol	Direction	Port Range	Purpose	Used By\
