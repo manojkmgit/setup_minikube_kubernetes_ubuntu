@@ -142,8 +142,10 @@ What is POD network CIDR in Kubernetes?
 * Parameter --v controls the verbosity level of the output.
 
 --apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet)
+
 --pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the Kubernetes networking model.
---service-cidr -> choose a CIDR which is not in use or doesn't exist yet
+
+--service-cidr -> choose a CIDR which is not in use or doesn't exist yet.
 
 Example commands:
 ```
