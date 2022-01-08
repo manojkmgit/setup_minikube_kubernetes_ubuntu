@@ -202,8 +202,9 @@ kubeadm join 172.31.45.213:6443 --token en5mr7.33h89rt55lrwrsik \
 ```
 
 In case, above set up has failed and you want to redo, you can clean up the setup using below command:\
+```
 sudo kubeadm reset -f
-
+```
 
 As mentioned in the above output, now run the below commands.
 ```console
@@ -215,6 +216,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 View the cluster config
 ```console
 kubectl get cm kubeadm-config -n kube-system -o yaml
+kubeadm config print init-defaults
 ```
 
 View the current status of resources
@@ -250,7 +252,7 @@ events (ev)
 statefulset (sts)
 ```
 
-View network plugin and pof infra container image
+View network plugin and pod infra container image
 ```console
 sudo cat /var/lib/kubelet/kubeadm-flags.env
 ```
