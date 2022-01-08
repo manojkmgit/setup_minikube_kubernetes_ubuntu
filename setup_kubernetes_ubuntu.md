@@ -141,11 +141,22 @@ What is POD network CIDR in Kubernetes?
 * Parameter --ignore-preflight-errors can be given to suppress capacity related or other errors, if needed.
 * Parameter --v controls the verbosity level of the output.
 
---apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet)
+--apiserver-advertise-address -> the private IP of current machine (it can be public IP too. But, then worker nodes will have to communicate over the public internet. So, it is better to use private IP only.)
 
 --pod-network-cidr -> choose a CIDR which is not in use or doesn't exist yet. We need to give same value later while applying the Kubernetes networking model.
 
 --service-cidr -> choose a CIDR which is not in use or doesn't exist yet.
+
+Get private IP of EC2 machine:
+```console
+curl http://169.254.169.254/latest/meta-data/local-ipv4
+```
+
+Get public IP of EC2 machine:
+```console
+curl http://169.254.169.254/latest/meta-data/public-ipv4
+curl http://checkip.amazonaws.com
+```
 
 Example commands:
 ```
