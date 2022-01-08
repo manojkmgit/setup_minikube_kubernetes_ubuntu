@@ -438,7 +438,7 @@ kubectl get nodes -A -o wide
 ```
 	
 	kubectl get nodes
-	kubectl drain k8s-node-01
+	kubectl drain k8s-node-01 --ignore-daemonsets
 	kubectl delete node k8s-node-01
 ```
 #Run on worker
