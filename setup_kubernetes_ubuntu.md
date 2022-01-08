@@ -369,18 +369,18 @@ Open ports on master and worker according to below link:/
 1. https://kubernetes.io/docs/reference/ports-and-protocols/
 2. Allow the CNI 6783 and 6784 ports in the nodes security group
 
-**Control plane**/
-Protocol	Direction	Port Range	Purpose	Used By/
-TCP	Inbound	6443	Kubernetes API server	All/
-TCP	Inbound	2379-2380	etcd server client API	kube-apiserver, etcd/
-TCP	Inbound	10250	Kubelet API	Self, Control plane/
-TCP	Inbound	10259	kube-scheduler	Self/
-TCP	Inbound	10257	kube-controller-manager	Self/
+**Control plane**\
+Protocol	Direction	Port Range	Purpose	Used By\
+TCP	Inbound	6443	Kubernetes API server	All\
+TCP	Inbound	2379-2380	etcd server client API	kube-apiserver, etcd\
+TCP	Inbound	10250	Kubelet API	Self, Control plane\
+TCP	Inbound	10259	kube-scheduler	Self\
+TCP	Inbound	10257	kube-controller-manager	Self
 
-**Worker node(s)**/
-Protocol	Direction	Port Range	Purpose	Used By/
-TCP	Inbound	10250	Kubelet API	Self, Control plane/
-TCP	Inbound	30000-32767	NodePort Services†	All/
+**Worker node(s)**\
+Protocol	Direction	Port Range	Purpose	Used By\
+TCP	Inbound	10250	Kubelet API	Self, Control plane\
+TCP	Inbound	30000-32767	NodePort Services†	All
 
 After ports have been open as needed, it's the time for the nodes to join the Kubernetes cluster.
 
