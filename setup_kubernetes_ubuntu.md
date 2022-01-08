@@ -1,5 +1,5 @@
 
-# All steps to set up Kubernetes cluster with one master and one worker node.
+# All steps to set up Kubernetes cluster with one master and one worker nodes.
 
 # Run tasks 01, 02, 03 on master as well as worker node.
 ## Task 01 - Install docker (master as well as worker node)
