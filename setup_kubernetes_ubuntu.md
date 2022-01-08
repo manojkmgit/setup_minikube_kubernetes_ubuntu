@@ -213,13 +213,13 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-View the cluster config
+### View the cluster config
 ```console
 kubectl get cm kubeadm-config -n kube-system -o yaml
 kubeadm config print init-defaults
 ```
 
-View the current status of resources
+### View the current status of resources
 
 ```console
 kubectl get svc -o wide -A
@@ -252,7 +252,7 @@ events (ev)
 statefulset (sts)
 ```
 
-View network plugin and pod infra container image
+### View network plugin and pod infra container image
 ```console
 sudo cat /var/lib/kubelet/kubeadm-flags.env
 ```
@@ -279,45 +279,55 @@ You can implement the same without parameter env.IPALLOC_RANGE too but in that c
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&password-secret=weave-passwd"
 ```
 
-# verify the value of --pod-network-cidr
+### Verify the value of --pod-network-cidr
+```console
 kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}'
 kubectl cluster-info dump | grep -m 1 cluster-cidr
 sudo grep cidr /etc/kubernetes/manifests/kube-*
 ps -ef | grep "cluster-cidr"
 kubectl get cm -o yaml -n kube-system kubeadm-config
 kubectl get cm -n kube-system kubeadm-config -o=jsonpath="{.data.ClusterConfiguration}"
+```
 
-# check value for --service-cidr
+### Check value for --service-cidr
+```console
 kubectl cluster-info dump | grep -m 1 service-cluster-ip-range
 kubeadm config print init-defaults
 ps -aux | grep kube-apiserver | grep service-cluster-ip-range
 SVCRANGE=$(echo '{"apiVersion":"v1","kind":"Service","metadata":{"name":"tst"},"spec":{"clusterIP":"1.1.1.1","ports":[{"port":443}]}}' | kubectl apply -f - 2>&1 | sed 's/.*valid IPs is //')
 echo $SVCRANGE
+```
 
-# check value of pod network range
+### Check value of pod network range
+```console
 kubectl get pod -n kube-system | grep weave
 kubectl -n kube-system logs weave-net-z4bwr -c weave | grep ipalloc-range
-
 kubeadm config images list
+```
 
+### Steps to remove weave-net if needed
+```
+kubectl delete -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl delete -n kube-system daemonset weave-net
+kubectl delete -n kube-system rolebinding weave-net
+kubectl delete -n kube-system role weave-net
+kubectl delete -n kube-system clusterrolebinding weave-net
+kubectl delete -n kube-system clusterrole weave-net
+kubectl delete -n kube-system serviceaccount weave-net
 
-# steps to remove weave-net if needed
-#if need to delete
-#kubectl delete -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-#kubectl delete -n kube-system daemonset weave-net
-#kubectl delete -n kube-system rolebinding weave-net
-#kubectl delete -n kube-system role weave-net
-#kubectl delete -n kube-system clusterrolebinding weave-net
-#kubectl delete -n kube-system clusterrole weave-net
-#kubectl delete -n kube-system serviceaccount weave-net
-
-#restart coredns, if needed
-#kubectl rollout restart deployment -n kube-system coredns
+### restart coredns, if needed
+```
+kubectl rollout restart deployment -n kube-system coredns
 #kubectl rollout status deployment -n kube-system coredns
+```
 
-# restart apiserver, if needed
+### Restart apiserver, if needed
+```
 kubectl -n kube-system delete pod -l 'component=kube-apiserver'
+```
 
+### Check status of resources
+```console
 kubectl get pod -o wide --all-namespaces -n kube-system
 kubectl get pod -o wide --all-namespaces
 kubectl version
@@ -325,23 +335,31 @@ kubectl api-resources
 kubectl api-versions
 kubectl get pods -n kube-system
 kubectl describe po coredns-64897985d-7q5zf -n kube-system
-
 kubectl get pods --all-namespaces -o custom-columns=:metadata.namespace --field-selector spec.nodeName=$NODENAME
+```
 
-Here, you can verify that, by default, master nodes have taint so as not to run any application deployments or pod.
+### You can verify that, by default, master nodes have taint so as not to run any application deployments or pods etc.
+```console
 kubectl describe node k8s-master-01 | grep -i taint
+```
 
-# If you have deleted deploy coredns by mistake, then do this:
+# If you have deleted deploy coredns by mistake, then do this to recover:
+```console
 cd ~
 git clone https://github.com/coredns/deployment.git
-https://github.com/coredns/deployment/blob/master/kubernetes/deploy.sh
 cd ~/deployment/kubernetes
+#or get the single file
+wget https://github.com/coredns/deployment/blob/master/kubernetes/deploy.sh
+#or
+wget https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/deploy.sh
 ./deploy.sh | kubectl apply -f -
 kubectl scale deploy coredns --replicas=3 -n kube-system
-----
+```
 
-#Another kind of Pod Network Deployment to Cluster, if needed. At one time, only one network can be deployed
-#sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+You can deploy the Pod Network using flannel too instead of Weave Net. At one time, only one network can be deployed.
+```
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
 
 # Task 06 - Add worker nodes to the cluster
 
