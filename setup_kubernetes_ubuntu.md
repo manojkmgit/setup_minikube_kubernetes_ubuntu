@@ -452,11 +452,11 @@ kubectl describe po <pod_name>
 **Master Nodes**\
 /var/log/kube-apiserver.log - API Server, responsible for serving the API\
 /var/log/kube-scheduler.log - Scheduler, responsible for making scheduling decisions\
-/var/log/kube-controller-manager.log - Controller that manages replication controllers\
+/var/log/kube-controller-manager.log - Controller that manages replication controllers
 
 **Worker Nodes**\
 /var/log/kubelet.log - Kubelet, responsible for running containers on the node\
-/var/log/kube-proxy.log - Kube Proxy, responsible for service load balancing\
+/var/log/kube-proxy.log - Kube Proxy, responsible for service load balancing
 
 Debugging:
 Ref: https://kubernetes.io/docs/tasks/debug-application-cluster/
