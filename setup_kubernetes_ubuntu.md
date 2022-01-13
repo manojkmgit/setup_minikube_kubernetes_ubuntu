@@ -28,6 +28,15 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 sudo usermod -aG docker $USER
 ```
 
+Add below shortcut alias to profile file.
+```console
+cat <<EOF | sudo tee ~/.bashrc
+alias kb="kubectl"
+alias kba="kubectl apply -f"
+alias kbg="kubectl get deploy,pod,svc,ep,sc,pv,pvc"
+EOF
+```
+
 Exit from the machine.
 ```console
 exit
