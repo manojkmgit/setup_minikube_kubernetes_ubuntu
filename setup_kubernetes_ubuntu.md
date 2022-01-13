@@ -30,7 +30,7 @@ sudo usermod -aG docker $USER
 
 Add below shortcut alias to profile file.
 ```console
-cat <<EOF | tee ~/.bashrc
+cat <<EOF >> ~/.bashrc
 alias kb="kubectl"
 alias kba="kubectl apply -f"
 alias kbg="kubectl get deploy,pod,svc,ep,sc,pv,pvc"
